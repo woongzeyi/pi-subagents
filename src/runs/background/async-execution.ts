@@ -8,7 +8,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, SessionManager } from "@mariozechner/pi-coding-agent";
 import type { AgentConfig } from "../../agents/agents.ts";
 import { applyThinkingSuffix } from "../shared/pi-args.ts";
 import { injectSingleOutputInstruction, resolveSingleOutputPath, validateFileOnlyOutputMode } from "../shared/single-output.ts";
@@ -61,6 +61,7 @@ interface AsyncExecutionContext {
 	cwd: string;
 	currentSessionId: string;
 	currentModelProvider?: string;
+	sessionManager: SessionManager;
 }
 
 interface AsyncChainParams {
@@ -372,7 +373,7 @@ export function executeAsyncChain(
 				share: shareEnabled,
 				sessionDir: sessionRoot ? path.join(sessionRoot, `async-${id}`) : undefined,
 				asyncDir,
-				sessionId: ctx.currentSessionId,
+				sessionId: ctx.sessionManager.getSessionId(),
 				piPackageRoot,
 				piArgv1: process.argv[1],
 				worktreeSetupHook,
@@ -416,7 +417,7 @@ export function executeAsyncChain(
 		ctx.pi.events.emit(SUBAGENT_ASYNC_STARTED_EVENT, {
 			id,
 			pid: spawnResult.pid,
-			sessionId: ctx.currentSessionId,
+			sessionId: ctx.sessionManager.getSessionId(),
 			mode: resultMode,
 			agent: firstAgents[0],
 			agents: flatAgents,
@@ -536,7 +537,7 @@ export function executeAsyncSingle(
 				share: shareEnabled,
 				sessionDir: sessionRoot ? path.join(sessionRoot, `async-${id}`) : undefined,
 				asyncDir,
-				sessionId: ctx.currentSessionId,
+				sessionId: ctx.sessionManager.getSessionId(),
 				piPackageRoot,
 				piArgv1: process.argv[1],
 				worktreeSetupHook,
@@ -562,7 +563,7 @@ export function executeAsyncSingle(
 		ctx.pi.events.emit(SUBAGENT_ASYNC_STARTED_EVENT, {
 			id,
 			pid: spawnResult.pid,
-			sessionId: ctx.currentSessionId,
+			sessionId: ctx.sessionManager.getSessionId(),
 			mode: "single",
 			agent,
 			task: task?.slice(0, 50),

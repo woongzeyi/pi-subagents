@@ -559,6 +559,7 @@ interface SingleStepContext {
 	registerInterrupt?: (interrupt: (() => void) | undefined) => void;
 	childIntercomTarget?: string;
 	orchestratorIntercomTarget?: string;
+	parentSessionId?: string;
 	onChildEvent?: (event: ChildEvent) => void;
 }
 
@@ -628,6 +629,7 @@ async function runSingleStep(
 			promptFileStem: step.agent,
 			intercomSessionName: ctx.childIntercomTarget,
 			orchestratorIntercomTarget: ctx.orchestratorIntercomTarget,
+			parentSessionId: ctx.parentSessionId,
 			runId: ctx.id,
 			childAgentName: step.agent,
 			childIndex: ctx.flatIndex,
@@ -1343,6 +1345,7 @@ async function runSubagent(config: SubagentRunConfig): Promise<void> {
 							piArgv1: config.piArgv1,
 							childIntercomTarget: config.childIntercomTargets?.[fi],
 							orchestratorIntercomTarget: config.controlIntercomTarget,
+							parentSessionId: config.sessionId ?? undefined,
 							registerInterrupt: (interrupt) => {
 								activeChildInterrupt = interrupt;
 							},
@@ -1486,6 +1489,7 @@ async function runSubagent(config: SubagentRunConfig): Promise<void> {
 				piArgv1: config.piArgv1,
 				childIntercomTarget: config.childIntercomTargets?.[flatIndex],
 				orchestratorIntercomTarget: config.controlIntercomTarget,
+				parentSessionId: config.sessionId ?? undefined,
 				registerInterrupt: (interrupt) => {
 					activeChildInterrupt = interrupt;
 				},

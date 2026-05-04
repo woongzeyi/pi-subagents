@@ -154,6 +154,7 @@ async function runSingleAttempt(
 		promptFileStem: agent.name,
 		intercomSessionName: options.intercomSessionName,
 		orchestratorIntercomTarget: options.orchestratorIntercomTarget,
+		parentSessionId: options.parentSessionId,
 		runId: options.runId,
 		childAgentName: agent.name,
 		childIndex: options.index ?? 0,

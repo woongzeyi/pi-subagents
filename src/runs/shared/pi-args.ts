@@ -11,6 +11,8 @@ export const SUBAGENT_ORCHESTRATOR_TARGET_ENV = "PI_SUBAGENT_ORCHESTRATOR_TARGET
 export const SUBAGENT_RUN_ID_ENV = "PI_SUBAGENT_RUN_ID";
 export const SUBAGENT_CHILD_AGENT_ENV = "PI_SUBAGENT_CHILD_AGENT";
 export const SUBAGENT_CHILD_INDEX_ENV = "PI_SUBAGENT_CHILD_INDEX";
+export const PI_IS_SUBAGENT = "PI_IS_SUBAGENT";
+export const PI_AGENT_ROUTER_PARENT_SESSION_ID = "PI_AGENT_ROUTER_PARENT_SESSION_ID";
 
 interface BuildPiArgsInput {
 	baseArgs: string[];
@@ -30,6 +32,7 @@ interface BuildPiArgsInput {
 	promptFileStem?: string;
 	intercomSessionName?: string;
 	orchestratorIntercomTarget?: string;
+	parentSessionId?: string;
 	runId?: string;
 	childAgentName?: string;
 	childIndex?: number;
@@ -122,6 +125,10 @@ export function buildPiArgs(input: BuildPiArgsInput): BuildPiArgsResult {
 
 	const env: Record<string, string | undefined> = {};
 	env[SUBAGENT_CHILD_ENV] = "1";
+	env[PI_IS_SUBAGENT] = "1";
+	if (input.parentSessionId) {
+		env[PI_AGENT_ROUTER_PARENT_SESSION_ID] = input.parentSessionId;
+	}
 	env.PI_SUBAGENT_INHERIT_PROJECT_CONTEXT = input.inheritProjectContext ? "1" : "0";
 	env.PI_SUBAGENT_INHERIT_SKILLS = input.inheritSkills ? "1" : "0";
 	if (input.intercomSessionName) {
